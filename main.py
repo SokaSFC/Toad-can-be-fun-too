@@ -1,4 +1,3 @@
-
 import pygame
 pygame.init()
 
@@ -18,9 +17,15 @@ player_image = pygame.image.load('/Users/user/Documents/Data Science/Code/Files 
         # Plateforms Images
 ground_image = pygame.image.load('/Users/user/Documents/Data Science/Code/Files Organizer/Toad is fun as well/images/ground.png').convert()
 
-    #player class
-class Player(pygame.sprite.Sprite):
+class Game():
+    def __init__(self):
+        self.player = Player()
+        self.pressed = {
 
+        }
+
+
+class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.health = 100
@@ -29,8 +34,17 @@ class Player(pygame.sprite.Sprite):
         self.velocity = 5
         self.image = player_image
         self.rect = self.image.get_rect()
+        self.rect.x = 600
+        self.rect.y = 550
+
+    def move_right(self):
+        self.rect.x += self.velocity
+
+    def move_left(self):
+        self.rect.x -= self.velocity
 
 player = Player()
+game = Game()
 
     # Loop
 run = True
@@ -39,19 +53,15 @@ while run:
     # Event Handler
         # Draw on screen
     screen.blit(bg_image, (0, 0))
-    screen.blit(player_image, (0, 0))
+    screen.blit(game.player.image, game.player.rect)
+    screen.blit(ground_image, (0, 600))
+    screen.blit(ground_image, (600, 600))
 
+    if game.pressed.get(pygame.K_RIGHT) and game.player.rect.x + game.player.rect.width < screen.get_width():
+        game.player.move_right()
+    elif game.pressed.get(pygame.K_LEFT) and game.player.rect.x > 0:
+        game.player.move_left()
 
-        # Player Moves
-    key = pygame.key.get_pressed()
-    if key[pygame.K_q] == True:
-        player.move_ip(-3, 0)
-    elif key[pygame.K_d] == True:
-        player.move_ip(3, 0)
-    elif key[pygame.K_z] == True:
-        player.move_ip(0, -3)
-    elif key[pygame.K_s] == True:
-        player.move_ip(0, 3)
 
         # Screen Update
     pygame.display.flip()
@@ -60,5 +70,10 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+        elif event.type == pygame.KEYDOWN:
+            game.pressed[event.key] = True
+        elif event.type == pygame.KEYUP:
+            game.pressed[event.key] = False
 
 pygame.quit()
